@@ -1,0 +1,29 @@
+.layout-container {
+    display: flex;
+    width: 100%;
+    /* Wir ziehen uns die globale Variable gap-strong (Fallback 20px) */
+    gap: var(--gap-strong, 20px);
+}
+
+.layout-column {
+    flex-direction: column;
+}
+
+.layout-row {
+    flex-direction: row;
+}
+
+.layout-item {
+    display: flex;
+    flex-direction: column;
+    
+    /* Wichtig für Flex-Kinder, damit sie bei langem Inhalt nicht ausbrechen */
+    min-width: 0; 
+    min-height: 0;
+    
+    /* width 100% sorgt in der Column dafür, dass es voll ausfüllt */
+    width: 100%;
+    
+    /* height so viel wie gebraucht wird */
+    height: auto;
+}

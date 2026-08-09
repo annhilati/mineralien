@@ -1,0 +1,55 @@
+.contextMenu {
+    position: absolute;
+    z-index: 1000;
+    background-color: rgba(30, 30, 35, 0.95);
+    backdrop-filter: blur(8px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+    padding: 8px 0;
+    min-width: 220px;
+    color: #fff;
+    font-family: var(--font-inter, sans-serif);
+    font-size: 14px;
+}
+
+.header {
+    padding: 4px 12px 8px 12px;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: rgba(255, 255, 255, 0.5);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    margin-bottom: 4px;
+}
+
+.list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+
+    li {
+        padding: 8px 12px;
+        cursor: pointer;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        transition: background-color 0.2s ease;
+
+        &:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+    }
+}
+
+.label {
+    font-weight: 500;
+    color: rgba(255, 255, 255, 0.7);
+    margin-right: 12px;
+}
+
+.value {
+    font-family: var(--font-mono, monospace);
+    color: #4da6ff;
+    font-size: 13px;
+}

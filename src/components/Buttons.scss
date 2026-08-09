@@ -1,0 +1,84 @@
+@use '../app/globals.scss' as globals;
+
+@mixin clickable {
+    // Standard-Skalierung für kleine Elemente, kann von großen Elementen überschrieben werden
+    --hover-scale: 1.08;
+
+    user-select: none;
+
+    &:hover {
+        transform: scale(var(--hover-scale));
+        box-shadow: 0 0 14px 3px #12bcff;
+        outline-color: white;
+        outline-offset: 0px;
+        outline-width: 2px;
+        outline-style: solid;
+        animation: pulse 1.5s ease-in-out infinite;
+    }
+
+    transition: transform 0.1s linear;
+
+    @keyframes pulse {
+
+        0%, 100% {
+            box-shadow: 0 0 10px 3px #12bcff;
+        }
+
+        50% {
+            box-shadow: 0 0 24px 4px #12bcff;
+        }
+    }
+}
+
+.button {
+    @include clickable;
+
+    display: flex;
+    width: 100%;
+    padding: 11px 20px;
+
+    font-size: 17px;
+    font-weight: 500;
+    font-family: var(--font-title);
+    line-height: 20px;
+    color: var(--bg-primary);
+    align-items: center;
+    justify-content: center;
+
+    background: var(--gelb);
+    border-radius: var(--radius);
+}
+
+.panorama-button {
+    @include clickable;
+    
+    display: flex;
+    width: 100%;
+    
+    flex-direction: column;
+    
+    padding: 0 0;
+    
+    background: var(--bg-primary);
+    border-radius: var(--radius);
+    --hover-scale: 1.03;
+    
+    /* Verhindert, dass Kinder aus dem Button rausgucken */
+    overflow: hidden; 
+
+    .panorama-image {
+        border-radius: var(--radius) var(--radius) 0 0;
+        width: 100%;
+        flex: 1;             /* Nimmt den übrigen Platz (nach dem Text) ein */
+        min-height: 0;       /* Erlaubt dem Bild, kleiner zu schrumpfen als seine Originalgröße */
+        object-fit: cover;   /* Schneidet das Bild dynamisch zu, ohne es zu verzerren */
+    }
+
+    .panorama-text {
+        flex-shrink: 0;      /* Verhindert, dass der Text gequetscht oder ausgeblendet wird */
+        padding: 20px 20px 20px 22px;
+        font-family: var(--font-headings);
+        font-size: 25px;
+        font-weight: 600;
+    }
+}

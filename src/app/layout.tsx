@@ -1,10 +1,11 @@
 import type { Metadata } from "next";
 import Link from 'next/link';
-import { Poppins, Lato } from "next/font/google";
+import { Poppins, Lato, Montserrat } from "next/font/google";
 
 import AsciiBackground from "@/components/AsciiBackground";
 import "./globals.scss";
 import "./layout.scss";
+import 'maplibre-gl/dist/maplibre-gl.css';
 
 const poppins = Poppins({
     subsets: ["latin"],
@@ -18,6 +19,12 @@ const lato = Lato({
     variable: "--next-font-lato",
 });
 
+const montserrat = Montserrat({
+    subsets: ["latin"],
+    weight: ["600"],
+    variable: "--next-font-montserrat",
+});
+
 export const metadata: Metadata = {
     title: "Mineralien App",
     description: "A stunning Next.js application",
@@ -25,7 +32,7 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children, }: Readonly<{ children: React.ReactNode; }>) {
     return (
-        <html lang="de" className={`${poppins.variable} ${lato.variable}`}>
+        <html lang="de" className={`${poppins.variable} ${lato.variable} ${montserrat.variable}`}>
             <body>
                 <Header />
                 <main className="content-wrapper">
@@ -42,7 +49,7 @@ function Header() {
     return (
         <header className="header" style={{ background: "none"}}>
             <AsciiBackground amplitudes={[1, 0.7]} zIndex={-1} fontSize={10}/>
-            <div className="header-content" style={{ background: "var(--bg-primary)", boxShadow: "0 0 20px 50px var(--bg-primary)"}}>
+            <div className="header-content" style={{ background: "var(--bg-primary)", boxShadow: "0 0 30px 50px var(--bg-primary)"}}>
                 <Link href="/"><div className="textmark">Mineralien</div></Link>
                 <nav className="navigation">
                     sd

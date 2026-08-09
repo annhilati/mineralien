@@ -14,6 +14,7 @@ export interface AsciiBackgroundProps {
     zIndex?: number;
 }
 
+/** In einem Element benutzen um dessen Hintergund auszufüllen */ 
 export default function AsciiBackground({
     dt = 0.0007,
     zoom = 0.03,

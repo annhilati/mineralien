@@ -10,6 +10,16 @@
 
     --font-text: var(--next-font-lato);
     --font-title: var(--next-font-poppins);
+    --font-headings: var(--next-font-montserrat);
+
+    --gap-strong: 25px;
+    --gap-light: 10px;
+
+    --radius: 6px;
+}
+
+*, *::before, *::after {
+    box-sizing: border-box;
 }
 
 html, body {
@@ -19,12 +29,13 @@ html, body {
     margin: 0;
     width: 100%;
     height: 100%;
-    overflow-y: scroll;
+    overflow-x: hidden;
+    overflow-y: auto;
+    scrollbar-gutter: stable; /* Verhindert Layout-Shifts, wenn die Scrollbar auftaucht/verschwindet */
     color: var(--weiss);
     font-family: var(--font-text), sans-serif;
     background: var(--bg-primary);
     z-index: -10;
-    
 
     a {
         text-decoration: none;
@@ -32,12 +43,28 @@ html, body {
     }
 }
 
-@mixin floater {
-    display: flex;
-    width: 100%;
+/* Custom Scrollbar Styles */
+::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+}
 
-    padding: 11px 20px;
+::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.05);
+}
 
-    background: var(--gelb);
-    border-radius: 6px;
+::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 10px;
+    border: 2px solid var(--bg-primary); /* Simuliert etwas Padding */
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.4);
+}
+
+/* Firefox Scrollbar Fallback */
+html {
+    scrollbar-width: thin;
+    scrollbar-color: rgba(255, 255, 255, 0.2) rgba(255, 255, 255, 0.05);
 }
