@@ -1,19 +1,21 @@
 import "./Buttons.scss"
 
-export function Button({ children }: { children: React.ReactNode }) {
+export function Button({ children: label }: { children: React.ReactNode }) {
     return (
         <div className="button">
-            {children}
+            {label}
         </div>
     )
 } 
 
-export function PanoramaButton({ src, width = "100%", height = "100%", children }: { src: string, width?: string, height?: string, children: React.ReactNode }) {
+export function PanoramaButton({ label, width = "100%", height = "100%", children }: { label: React.ReactNode, width?: string, height?: string, children: React.ReactNode }) {
     return (
         <div className="panorama-button" style={{ width: width, height: height }}>
-            <img src={src} className="panorama-image"></img>
-            <div className="panorama-text">
+            <div className="panorama-image">
                 {children}
+            </div>
+            <div className="panorama-text">
+                {label}
             </div>
         </div>
     )

@@ -7,10 +7,20 @@
 
 .layout-column {
     flex-direction: column;
+
+    & > * {
+        height: auto;
+        width: 100%;
+    }
 }
 
 .layout-row {
     flex-direction: row;
+
+    & > * {
+        height: 100%;
+        width: auto;
+    }
 }
 
 .layout-item {
@@ -20,10 +30,4 @@
     /* Wichtig für Flex-Kinder, damit sie bei langem Inhalt nicht ausbrechen */
     min-width: 0; 
     min-height: 0;
-    
-    /* width 100% sorgt in der Column dafür, dass es voll ausfüllt */
-    width: 100%;
-    
-    /* height so viel wie gebraucht wird */
-    height: auto;
 }

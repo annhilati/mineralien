@@ -1,4 +1,6 @@
-import { useState, useEffect } from 'react';
+"use client";
+
+import { useState } from 'react';
 import Map, { NavigationControl, Marker } from 'react-map-gl/maplibre';
 import 'maplibre-gl/dist/maplibre-gl.css';
 import * as maplibregl from 'maplibre-gl';
@@ -13,58 +15,18 @@ if (typeof window !== 'undefined') {
 }
 
 import { MAP_CONFIG } from './config';
-import { buildMapStyle } from './MapBuilder';
-import { MapContextMenu, ContextMenuData } from './MapContextMenu';
+import { useMapStyle } from './hooks/useMapStyle';
+import { useMapContextMenu } from './hooks/useMapContextMenu';
+import { MapContextMenu } from './MapContextMenu';
 
-export default function Karte() {
-    const [mapStyle, setMapStyle] = useState<any>(null);
+export default function Testkarte() {
+    // 1. Modulares Styling laden (Dependency Injection via Config)
+    const mapStyle = useMapStyle(MAP_CONFIG);
+    
+    // 2. Modulares Kontextmenü laden
+    const { contextMenu, handleContextMenu, closeContextMenu } = useMapContextMenu();
+    
     const [zoom, setZoom] = useState(MAP_CONFIG.initialViewState.zoom);
-    const [contextMenu, setContextMenu] = useState<ContextMenuData | null>(null);
-
-    const handleContextMenu = (e: any) => {
-        e.originalEvent.preventDefault();
-        const { lng, lat } = e.lngLat;
-        const elevation = e.target.queryTerrainElevation([lng, lat]);
-        
-        const container = e.target.getContainer();
-        const mapWidth = container.clientWidth;
-        const mapHeight = container.clientHeight;
-
-        // Geschätzte Menü-Größe inkl. Puffer
-        const menuWidth = 240; 
-        const menuHeight = 160;
-
-        let safeX = e.point.x;
-        let safeY = e.point.y;
-
-        // Klappt das Menü nach links auf, wenn am rechten Rand geklickt wird
-        if (safeX + menuWidth > mapWidth) {
-            safeX = e.point.x - menuWidth;
-        }
-        
-        // Klappt das Menü nach oben auf, wenn am unteren Rand geklickt wird
-        if (safeY + menuHeight > mapHeight) {
-            safeY = e.point.y - menuHeight;
-        }
-        
-        setContextMenu({
-            x: safeX,
-            y: safeY,
-            lng,
-            lat,
-            elevation
-        });
-    };
-
-    const closeContextMenu = () => {
-        if (contextMenu) setContextMenu(null);
-    };
-
-    useEffect(() => {
-        buildMapStyle()
-            .then(style => setMapStyle(style))
-            .catch(err => console.error("Fehler beim Laden des Styles:", err));
-    }, []);
 
     if (!mapStyle) {
         return (
@@ -80,6 +42,8 @@ export default function Karte() {
                 mapLib={maplibregl}
                 initialViewState={MAP_CONFIG.initialViewState}
                 mapStyle={mapStyle}
+                maxZoom={18}
+                minZoom={0.8}
                 onMove={(e) => setZoom(e.viewState.zoom)}
                 onContextMenu={handleContextMenu}
                 onClick={closeContextMenu}
@@ -109,7 +73,7 @@ export default function Karte() {
             {contextMenu && (
                 <MapContextMenu 
                     data={contextMenu} 
-                    onClose={() => setContextMenu(null)} 
+                    onClose={closeContextMenu} 
                 />
             )}
         </div>

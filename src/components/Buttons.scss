@@ -46,7 +46,7 @@
     justify-content: center;
 
     background: var(--gelb);
-    border-radius: var(--radius);
+    border-radius: var(--radius-light);
 }
 
 .panorama-button {
@@ -60,18 +60,26 @@
     padding: 0 0;
     
     background: var(--bg-primary);
-    border-radius: var(--radius);
+    border-radius: var(--radius-heavy);
     --hover-scale: 1.03;
     
     /* Verhindert, dass Kinder aus dem Button rausgucken */
     overflow: hidden; 
 
     .panorama-image {
-        border-radius: var(--radius) var(--radius) 0 0;
+        border-radius: var(--radius-heavy) var(--radius-heavy) 0 0;
         width: 100%;
-        flex: 1;             /* Nimmt den übrigen Platz (nach dem Text) ein */
-        min-height: 0;       /* Erlaubt dem Bild, kleiner zu schrumpfen als seine Originalgröße */
-        object-fit: cover;   /* Schneidet das Bild dynamisch zu, ohne es zu verzerren */
+        flex: 1;          
+        min-height: 0;    
+        overflow: hidden;
+        position: relative;
+        
+        > * {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
     }
 
     .panorama-text {
