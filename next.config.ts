@@ -8,4 +8,7 @@ const nextConfig: NextConfig = {
   },
 };
 
-export default nextConfig;
+// @ts-expect-error: next-plugin-yaml has no type definitions
+import withYaml from "next-plugin-yaml";
+
+export default withYaml(nextConfig);

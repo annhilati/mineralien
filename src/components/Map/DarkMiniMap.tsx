@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef } from 'react';
+import { useState, useRef, forwardRef, useImperativeHandle } from 'react';
 import { Map, Marker, MapRef, Popup } from 'react-map-gl/maplibre';
 import { Compass } from 'lucide-react';
 import * as maplibregl from 'maplibre-gl';
@@ -20,13 +20,18 @@ if (typeof window !== 'undefined') {
 import { DARK_MAP_CONFIG } from './config';
 import { useMapStyle } from './hooks/useMapStyle';
 
+export interface DarkMiniMapRef {
+    flyTo: (options: { center: [number, number]; zoom?: number; duration?: number; essential?: boolean }) => void;
+}
+
 interface DarkMiniMapProps {
     fixed?: boolean;
     center?: { longitude: number; latitude: number };
     zoom?: number;
+    children?: React.ReactNode;
 }
 
-export default function DarkMiniMap({ fixed = false, center, zoom }: DarkMiniMapProps) {
+const DarkMiniMap = forwardRef<DarkMiniMapRef, DarkMiniMapProps>(({ fixed = false, center, zoom, children }, ref) => {
     const mapRef = useRef<MapRef>(null);
     // 1. Modulares Styling laden mit unserer neuen Dark Config
     const mapStyle = useMapStyle(DARK_MAP_CONFIG);
@@ -41,15 +46,14 @@ export default function DarkMiniMap({ fixed = false, center, zoom }: DarkMiniMap
     const [zoomState, setZoom] = useState(initialViewState.zoom);
     const [isLoaded, setIsLoaded] = useState(false);
     
-    // State für das Popup
-    const [showPopup, setShowPopup] = useState(false);
+    useImperativeHandle(ref, () => ({
+        flyTo: (options) => {
+            mapRef.current?.flyTo(options);
+        }
+    }));
 
     if (!mapStyle) {
-        return (
-            <div style={{ display: 'flex', width: '100%', height: '100%', justifyContent: 'center', alignItems: 'center', color: 'var(--fuchsia)' }}>
-                
-            </div>
-        );
+        return <div style={{ display: 'flex', width: '100%', height: '100%' }}/>;
     }
 
     return (
@@ -77,53 +81,10 @@ export default function DarkMiniMap({ fixed = false, center, zoom }: DarkMiniMap
                 doubleClickZoom={!fixed}
                 touchZoomRotate={!fixed} // Deaktiviert Pinch-to-Zoom auf Touchscreens
             >
-
-                {/* Marker im Akzent-Design */}
-                <Marker 
-                    longitude={12.3481} 
-                    latitude={47.2734} 
-                    anchor="bottom"
-                    onClick={(e) => {
-                        e.originalEvent.stopPropagation();
-                        setShowPopup(false)
-                        mapRef.current?.flyTo({
-                            center: [12.3481, 47.2734],
-                            zoom: 14,
-                            duration: 2500,
-                            essential: true
-                        });
-                    }}
-                >
-                    <div 
-                        className="map-marker"
-                        onMouseEnter={() => setShowPopup(true)}
-                        onMouseLeave={() => setShowPopup(false)}
-                    >
-                        <Compass color='var(--weiss)'/>
-                    </div>
-                </Marker>
-
-                {/* Das Popup, das nur bei Hover gerendert wird */}
-                {showPopup && (
-                    <Popup 
-                        longitude={12.3481} 
-                        latitude={47.2734} 
-                        anchor="bottom"
-                        offset={45} // Verschiebt das Popup weiter nach oben, weg vom Marker
-                        closeButton={false}
-                        closeOnClick={false}
-                        className="map-marker-popup"
-                        style={{ zIndex: 10 }}
-                    >
-                        <div style={{ display: 'flex', flexDirection: 'column', gap: '5px' }}>
-                            <h3 style={{ margin: 0, fontSize: '16px', color: 'var(--rot)' }}>Geheimnisvoller Ort</h3>
-                            <p style={{ margin: 0, fontSize: '13px', opacity: 0.9 }}>
-                                Ein unentdecktes Mineralienvorkommen.
-                            </p>
-                        </div>
-                    </Popup>
-                )}
+                {children}
             </Map>
         </div>
     );
-}
+});
+
+export default DarkMiniMap;

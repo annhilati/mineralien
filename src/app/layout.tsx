@@ -48,7 +48,7 @@ function Header() {
             <div className="header-content">
                 <Link href="/"><div className="textmark">Mineralien</div></Link>
                 <nav className="navigation">
-                    sd
+                    {/* sd */}
                 </nav>
             </div>
         </header>

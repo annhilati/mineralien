@@ -18,13 +18,36 @@
 }
 
 /* --- MapLibre Popup Dark Theme Overrides --- */
-.map-marker-popup .maplibregl-popup-content {
-    background-color: var(--bg-primary);
-    color: var(--weiss);
-    border-radius: var(--radius-light);
-    border: 1px solid var(--fuchsia);
-    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.8);
-    padding: 10px 15px;
+.map-marker-popup {
+    .maplibregl-popup-content {
+        background-color: var(--bg-primary);
+        color: var(--weiss);
+        border-radius: var(--radius-light);
+        outline: 2px solid var(--fuchsia);
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.8);
+        padding: 10px 15px;
+        z-index: 10;
+
+        .popup-wrapper {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+    
+            .popup-title {
+                margin: 0;
+                font-size: 18px;
+                font-family: var(--font-headings);
+                color: var(--weiss);
+                text-transform: uppercase;
+            }
+    
+            .popup-text {
+                margin: 0;
+                font-size: 13px;
+                opacity: 0.9;
+            }
+        }
+    }
 }
 
 /* Den kleinen Pfeil (Tip) einfärben */
