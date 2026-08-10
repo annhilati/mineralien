@@ -6,9 +6,13 @@ const nextConfig: NextConfig = {
   images: {
     unoptimized: true, // Erforderlich für GitHub Pages (Static Export)
   },
+  webpack(config) {
+    config.module.rules.push({
+      test: /\.ya?ml$/,
+      use: 'yaml-loader',
+    });
+    return config;
+  },
 };
 
-// @ts-expect-error: next-plugin-yaml has no type definitions
-import withYaml from "next-plugin-yaml";
-
-export default withYaml(nextConfig);
+export default nextConfig;

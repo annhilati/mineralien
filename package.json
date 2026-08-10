@@ -19,7 +19,8 @@
     "react-dom": "19.2.8",
     "react-map-gl": "^8.1.2",
     "sass": "^1.102.0",
-    "simplex-noise": "^4.0.3"
+    "simplex-noise": "^4.0.3",
+    "yaml-loader": "^0.9.0"
   },
   "devDependencies": {
     "@types/node": "^20",
