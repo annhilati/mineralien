@@ -35,11 +35,7 @@ export default function RootLayout({ children, }: Readonly<{ children: React.Rea
         <html lang="de" className={`${poppins.variable} ${lato.variable} ${montserrat.variable}`}>
             <body>
                 <Header />
-                <main className="content-wrapper">
-                    <div className="content">
-                        {children}
-                    </div>
-                </main>
+                {children}
             </body>
         </html>
     );
@@ -47,9 +43,9 @@ export default function RootLayout({ children, }: Readonly<{ children: React.Rea
 
 function Header() {
     return (
-        <header className="header" style={{ background: "none"}}>
+        <header className="header">
             <AsciiBackground amplitudes={[1, 0.7]} zIndex={-1} fontSize={10}/>
-            <div className="header-content" style={{ background: "var(--bg-primary)", boxShadow: "0 0 30px 50px var(--bg-primary)"}}>
+            <div className="header-content">
                 <Link href="/"><div className="textmark">Mineralien</div></Link>
                 <nav className="navigation">
                     sd

@@ -2,12 +2,11 @@
 
 @mixin clickable {
     // Standard-Skalierung für kleine Elemente, kann von großen Elementen überschrieben werden
-    --hover-scale: 1.08;
 
     user-select: none;
 
     &:hover {
-        transform: scale(var(--hover-scale));
+        transform: scale(1.02);
         box-shadow: 0 0 14px 3px #12bcff;
         outline-color: white;
         outline-offset: 0px;
@@ -29,6 +28,9 @@
         }
     }
 }
+
+.clickable { @include clickable; }
+
 
 .button {
     @include clickable;
@@ -61,18 +63,16 @@
     
     background: var(--bg-primary);
     border-radius: var(--radius-heavy);
-    --hover-scale: 1.03;
     
+    position: relative;
     /* Verhindert, dass Kinder aus dem Button rausgucken */
     overflow: hidden; 
 
     .panorama-image {
-        border-radius: var(--radius-heavy) var(--radius-heavy) 0 0;
+        position: absolute;
+        top: 0; left: 0; right: 0; bottom: 0;
         width: 100%;
-        flex: 1;          
-        min-height: 0;    
-        overflow: hidden;
-        position: relative;
+        height: 100%;
         
         > * {
             width: 100%;
@@ -83,10 +83,19 @@
     }
 
     .panorama-text {
-        flex-shrink: 0;      /* Verhindert, dass der Text gequetscht oder ausgeblendet wird */
-        padding: 20px 20px 20px 22px;
+        position: absolute;
+        bottom: 0;
+        width: 100%;
+        
+        background: rgb(from var(--bg-primary) r g b / 0.7);
+        backdrop-filter: blur(16px);
+        
+        padding: 15px 20px 15px 22px;
         font-family: var(--font-headings);
         font-size: 25px;
         font-weight: 600;
+        
+        /* Abgerundete Ecken unten passend zum Button */
+        border-radius: 0 0 var(--radius-heavy) var(--radius-heavy);
     }
 }

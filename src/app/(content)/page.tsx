@@ -9,7 +9,7 @@ export default function Home() {
         <>
             <Layout row ratios={[1, 2.5]}>
                 <Layout gap="10px">
-                    <Link href="#">
+                    <Link href="/map">
                         <PanoramaButton label="Karte" height="250px">
                             <DarkMiniMap fixed={true} zoom={3.3} center={{ longitude: 12.3481, latitude: 50 }} />
                         </PanoramaButton>

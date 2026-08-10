@@ -119,7 +119,7 @@ export const DARK_MAP_CONFIG: MapConfig = {
     },
 
     customColors: {
-        background: '#1c1a20', 
+        background: '#222026', 
         forest: '#232029',                 
         grass: '#2d2936',                    
         crop: '#1c1a20',                     
@@ -128,8 +128,8 @@ export const DARK_MAP_CONFIG: MapConfig = {
         national_park: '#1c1a20',    
         water: '#301b1f',
         waterway: '#401019',     
-        buildings: '#f54a7d',      
-        contours: '#85142a',  
+        buildings: 'var(--fuchsia)',      
+        contours: 'var(--rot)',  
         paths: '#a34154',
         hillshade: '#080709'
     },

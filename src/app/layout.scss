@@ -9,7 +9,7 @@ header.header {
     align-items: center;
     justify-content: center;
 
-    background: var(--bg-primary);
+    background: none; // var(--bg-primary);
     box-shadow: 0px 2px 4px 2px rgba(from var(--bg-primary) r g b / 0.3);
 
     user-select: none;
@@ -22,6 +22,9 @@ header.header {
 
         justify-content: space-between;
         align-items: center;
+
+        background: var(--bg-primary);
+        box-shadow: 0px  0 30px 50px var(--bg-primary);
 
         .textmark {
             font-family: var(--font-title), sans-serif;

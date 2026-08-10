@@ -1,0 +1,45 @@
+@use "@/components/Buttons.scss" as Buttons;
+
+
+
+.map-marker {
+    @include Buttons.clickable;
+    
+    background-color: rgb(from var(--rot) r g b / 0.6);
+    color: var(--weiss);
+    border-radius:  var(--radius-light) ;
+    cursor: pointer;
+    font-weight: bold ;
+    aspect-ratio:  1/1 ;
+    display: flex ;
+    justify-content:  center ;
+    align-items: center ;
+    padding: 5px;
+}
+
+/* --- MapLibre Popup Dark Theme Overrides --- */
+.map-marker-popup .maplibregl-popup-content {
+    background-color: var(--bg-primary);
+    color: var(--weiss);
+    border-radius: var(--radius-light);
+    border: 1px solid var(--fuchsia);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.8);
+    padding: 10px 15px;
+}
+
+/* Den kleinen Pfeil (Tip) einfärben */
+.map-marker-popup.maplibregl-popup-anchor-bottom .maplibregl-popup-tip {
+    border-top-color: var(--fuchsia);
+}
+
+.map-marker-popup.maplibregl-popup-anchor-top .maplibregl-popup-tip {
+    border-bottom-color: var(--fuchsia);
+}
+
+.map-marker-popup.maplibregl-popup-anchor-left .maplibregl-popup-tip {
+    border-right-color: var(--fuchsia);
+}
+
+.map-marker-popup.maplibregl-popup-anchor-right .maplibregl-popup-tip {
+    border-left-color: var(--fuchsia);
+}
