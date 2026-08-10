@@ -1,6 +1,5 @@
-import type { NextConfig } from "next";
-
-const nextConfig: NextConfig = {
+/** @type {import('next').NextConfig} */
+const nextConfig = {
   reactStrictMode: false, // Verhindert doppeltes Mounting von MapLibre (was DataCloneErrors bei ArrayBuffers auslöst)
   output: "export",
   images: {
