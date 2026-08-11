@@ -9,13 +9,15 @@
         ".next/types": true,
         ".vscode": true,
         ".next/dev": true,
-        ".next": true
+        ".next": true,
+        "out": true
     },
     "hide-files.files": [
         "node_modules",
         ".next/types",
         ".vscode",
         ".next/dev",
-        ".next"
+        ".next",
+        "out"
     ]
 }

@@ -107,7 +107,7 @@ export async function buildMapStyle(originalConfig: MapConfig): Promise<StyleSpe
                 'raster-saturation': -1,
                 'raster-brightness-min': 0.1,
                 'raster-brightness-max': 0.7,
-                'raster-contrast': 0.25
+                'raster-contrast': 0.45
             }
         });
 
@@ -202,6 +202,7 @@ export async function buildMapStyle(originalConfig: MapConfig): Promise<StyleSpe
             type: 'line',
             source: 'contour-source',
             'source-layer': 'contours',
+            filter: ['>=', ['get', 'ele'], 40], // Verhindert Artefakte an Küsten und Inseln
             paint: {
                 'line-color': config.customColors?.contours || '#637555',
                 'line-opacity': 0.4,

@@ -26,7 +26,7 @@
         "raster-saturation": -1,
         "raster-brightness-min": 0.1,
         "raster-brightness-max": 0.7,
-        "raster-contrast": 0.25
+        "raster-contrast": 0.45
       }
     }
   ]

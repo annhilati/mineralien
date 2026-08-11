@@ -22,7 +22,7 @@ export default function MapPage() {
             borderRadius: 'var(--radius-heavy)',
             overflow: 'hidden'
         }}>
-            <DarkMiniMap ref={mapRef} center={{ longitude: 13.097265222611101, latitude: 49.858742456189496 }} zoom={5.8}>
+            <DarkMiniMap ref={mapRef} center={{ longitude: 13.097265222611101, latitude: 49.858742456189496 }} zoom={4.8}>
                 {fundstellen.map((f: any) => (
                     <React.Fragment key={f.id}>
                         <Marker 

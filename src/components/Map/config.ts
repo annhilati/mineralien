@@ -172,7 +172,7 @@ export const SATELLITE_CONFIG: MapConfig = {
 
     customColors: {
         background: '#000000',
-        forest: 'rgba(29, 46, 20, 0.3)', // Experimenteller olivgrüner Overlay, um ca. #181f07 zu erreichen                
+        forest: 'rgba(18, 36, 20, 0.3)', // Experimenteller olivgrüner Overlay, um ca. #181f07 zu erreichen                
         grass: 'rgba(0,0,0,0)',
         crop: 'rgba(0,0,0,0)',
         glacier: 'rgba(0,0,0,0)',
