@@ -1,0 +1,196 @@
+"use client";
+
+import React, { useState, useRef, useEffect } from "react";
+import { Marker, Popup } from "react-map-gl/maplibre";
+import { Navigation, Compass } from "lucide-react";
+import DarkMiniMap, { DarkMiniMapRef } from "@/components/Map/DarkMiniMap";
+import CrystalViewerClient from "@/components/3D/CrystalViewerClient";
+
+interface MineralData {
+    id: string;
+    name: string;
+    base64Data?: string;
+}
+
+interface Fundstelle {
+    id: string;
+    title: string;
+    description: string;
+    latitude: number;
+    longitude: number;
+    mineralsData?: MineralData[];
+}
+
+interface MapPageClientProps {
+    fundstellen: Fundstelle[];
+}
+
+const RandomRotatingIcon = () => {
+    const [rotation, setRotation] = useState(0);
+    const [duration, setDuration] = useState(0);
+
+    useEffect(() => {
+        let timeoutId: NodeJS.Timeout;
+        let isMounted = true;
+
+        const tick = () => {
+            if (!isMounted) return;
+            // Stillstand (2 bis 15 Sekunden)
+            const delay = Math.random() * 13000 + 2000;
+            
+            timeoutId = setTimeout(() => {
+                if (!isMounted) return;
+                // Rotation um -270 bis +270 Grad
+                const rotateBy = (Math.random() * 540) - 270;
+                // Animationsdauer (0 bis 4 Sekunden)
+                const animDuration = (Math.random() * 2000) + 1000;
+                
+                setRotation(prev => prev + rotateBy);
+                setDuration(animDuration);
+                
+                // Nach Abschluss der Animation beginnt der nächste Stillstand-Zyklus
+                timeoutId = setTimeout(tick, animDuration);
+            }, delay);
+        };
+
+        tick();
+
+        return () => {
+            isMounted = false;
+            clearTimeout(timeoutId);
+        };
+    }, []);
+
+    return (
+        <div className="pulse-marker" style={{
+            transform: `rotate(${rotation}deg)`,
+            transition: `transform ${duration}ms ease-in-out`
+        }}>
+            <Navigation fill="var(--orange)" color="var(--orange)" />
+        </div>
+    );
+};
+
+export default function MapPageClient({ fundstellen }: MapPageClientProps) {
+    const [hoveredMarker, setHoveredMarker] = useState<string | null>(null);
+    const mapRef = useRef<DarkMiniMapRef>(null);
+
+    return (
+        <main style={{ 
+            flex: 1, 
+            margin: 'var(--gap-light)', 
+            position: 'relative', 
+            outline: '2px solid rgb(from var(--weiss) r g b / 0.2)', 
+            outlineOffset: '4px', 
+            borderRadius: 'var(--radius-heavy)',
+            overflow: 'hidden'
+        }}>
+            <DarkMiniMap ref={mapRef} center={{ longitude: 13.097265222611101, latitude: 49.858742456189496 }} zoom={5.2}>
+                {/* Statischer Marker für Dresden */}
+                <Marker 
+                    longitude={13.7373} 
+                    latitude={51.0504} 
+                    anchor="center"
+                    style={{ pointerEvents: 'none', zIndex: '10' }}
+                >
+                    <RandomRotatingIcon />
+                </Marker>
+
+                {fundstellen.map((f) => (
+                    <React.Fragment key={f.id}>
+                        <Marker 
+                            longitude={f.longitude} 
+                            latitude={f.latitude} 
+                            anchor="bottom"
+                            onClick={(e) => {
+                                e.originalEvent.stopPropagation();
+                                setHoveredMarker(null);
+                                mapRef.current?.flyTo({
+                                    center: [f.longitude, f.latitude],
+                                    zoom: 14,
+                                    duration: 2500,
+                                    essential: true
+                                });
+                            }}
+                        >
+                            <div 
+                                className="map-marker"
+                                onMouseEnter={() => setHoveredMarker(f.id)}
+                                onMouseLeave={() => setHoveredMarker(null)}
+                            >
+                                <Compass size="var(--icon-size)" color='var(--weiss)'/>
+                            </div>
+                        </Marker>
+
+                        {hoveredMarker === f.id && (
+                            <Popup 
+                                longitude={f.longitude} 
+                                latitude={f.latitude} 
+                                anchor="bottom"
+                                offset={45}
+                                closeButton={false}
+                                closeOnClick={false}
+                                maxWidth={f.mineralsData && f.mineralsData.length > 0 ? "500px" : "350px"}
+                                className="map-marker-popup"
+                            >
+                                <div className="popup-wrapper" style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                                    <div>
+                                        <h3 className="popup-title">{f.title}</h3>
+                                        <p className="popup-text">
+                                            {f.description}
+                                        </p>
+                                    </div>
+                                    
+                                    {/* Mineralien-Boxen */}
+                                    {f.mineralsData && f.mineralsData.length > 0 && (
+                                        <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap', marginTop: '5px' }}>
+                                            {f.mineralsData.map(mineral => (
+                                                <div key={mineral.id} style={{
+                                                    width: '120px',
+                                                    height: '150px',
+                                                    backgroundColor: 'rgb(from var(--bg-primary) r g b / 0.5)',
+                                                    borderRadius: 'var(--radius-light)',
+                                                    overflow: 'hidden',
+                                                    display: 'flex',
+                                                    flexDirection: 'column',
+                                                    border: '1px solid rgb(from var(--weiss) r g b / 0.15)',
+                                                    boxShadow: 'inset 0 0 10px 0 rgba(0,0,0,0.5)'
+                                                }}>
+                                                    <div style={{
+                                                        padding: '5px',
+                                                        fontSize: '12px',
+                                                        textAlign: 'center',
+                                                        fontFamily: 'var(--font-title)',
+                                                        borderBottom: '1px solid rgb(from var(--weiss) r g b / 0.15)',
+                                                        backgroundColor: 'rgb(from var(--bg-primary) r g b / 0.8)',
+                                                        fontWeight: 500
+                                                    }}>
+                                                        {mineral.name}
+                                                    </div>
+                                                    <div style={{ flex: 1, position: 'relative', cursor: 'default' }}>
+                                                        {mineral.base64Data ? (
+                                                            <CrystalViewerClient base64Data={mineral.base64Data} color="#ffffff" fixed={true} />
+                                                        ) : (
+                                                            <div style={{ padding: '10px', fontSize: '10px', color: 'red' }}>STL nicht gefunden</div>
+                                                        )}
+                                                    </div>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    )}
+                                </div>
+                            </Popup>
+                        )}
+                    </React.Fragment>
+                ))}
+            </DarkMiniMap>
+            {/* Schattige Verblendung (Vignette) über den Kanten */}
+            <div style={{
+                position: 'absolute',
+                top: 0, left: 0, right: 0, bottom: 0,
+                pointerEvents: 'none',
+                boxShadow: 'inset 0 0 7px 5px var(--bg-primary)'
+            }} />
+        </main>
+    );
+}

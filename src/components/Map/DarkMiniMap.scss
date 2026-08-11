@@ -19,6 +19,45 @@
     --icon-size: 20px;
 }
 
+.pulse-marker {
+    position: relative;
+    /* Zentrierung für das Icon */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+
+    &::after {
+        content: '';
+        position: absolute;
+        top: 40%;
+        left: 58%;
+        width: 14px;
+        /* Startgröße des Pulses (etwas kleiner als das Icon) */
+        height: 14px;
+        background-color: var(--orange);
+        /* Orange Pulsierung */
+        border-radius: 50%;
+        z-index: -1;
+        animation: pulse-ring 1.8s cubic-bezier(0.215, 0.61, 0.355, 1) infinite;
+    }
+
+    @keyframes pulse-ring {
+        0% {
+            transform: translate(-50%, -50%) scale(0.9);
+            opacity: 0.8;
+        }
+
+        100% {
+            transform: translate(-50%, -50%) scale(4.0);
+            opacity: 0;
+        }
+    }
+}
+
+
 /* --- MapLibre Popup Dark Theme Overrides --- */
 .map-marker-popup {
     .maplibregl-popup-content {
