@@ -14,7 +14,9 @@
     display: flex ;
     justify-content:  center ;
     align-items: center ;
-    padding: 5px;
+    padding: 4px;
+
+    --icon-size: 20px;
 }
 
 /* --- MapLibre Popup Dark Theme Overrides --- */

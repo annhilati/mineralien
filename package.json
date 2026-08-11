@@ -9,7 +9,9 @@
     "lint": "eslint"
   },
   "dependencies": {
+    "@icons-pack/react-simple-icons": "^13.13.0",
     "framer-motion": "^13.0.0",
+    "icons-pack": "^0.0.1-security",
     "lucide-react": "^1.31.0",
     "maplibre-contour": "^0.1.0",
     "maplibre-gl": "^6.2.0",

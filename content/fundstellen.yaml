@@ -1,30 +1,30 @@
 - id: grube_clara
   title: "Grube Clara"
-  description: "Die Grube wird von der Firma Sachtleben betrieben. Sie befindet sich im hinteren Teil des Rankachtales bei Oberwolfach und ist für den Sammler nicht zugänglich. Die Aufbereitungsanlage mit den für Sammler zugänglichen Halden befindet sich an der Straße, die von Wolfach nach Kirnbach führt."
+  description: Mineralienreichste Grube in Europa
   longitude: 8.21277800
   latitude: 48.28583300
 - id: schacht_116
   title: Wismut Schacht 116
-  description: Heilige Drei Könige
+  description: Halde eines aufgelassenen Schachts, genannt "Heilige Drei Könige"
   longitude: 12.99161196
   latitude: 50.56443079
 - id: hohe_tauern
   title: Hohe Tauern
-  description: ...
+  description: Eine Hochgebirgsregion der Zentralalpen mit einer großen Vielfalt an alpinen Mineralien
   latitude: 47.25
   longitude: 12.297
 - id: krahbergzinken
   title: Krahbergzinken
-  description: ...
-  latitude: 47.35743537 
-  longitude: 13.73752431
+  description: Historischer Kupferabbau
+  latitude: 47.35816 
+  longitude: 13.73723
 - id: schacht_46
   title: Wismut Schacht 46
-  description: Grube Palmbaum
+  description: Halde eines aufgelassenen Schachts, genannt "Grube Palmbaum"
   latitude: 50.66417
   longitude: 13.09389
 - id: schlottwitz
   title: Schlottwitz
-  description: ...
+  description: Historisches Fundgebiet für Achat, Amethyst und Jaspis
   latitude: 50.87713
   longitude: 13.81253

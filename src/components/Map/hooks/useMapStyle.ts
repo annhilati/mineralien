@@ -1,9 +1,10 @@
 import { useState, useEffect } from 'react';
-import { buildMapStyle } from '../MapBuilder';
+import { StyleSpecification } from 'maplibre-gl';
+import { buildMapStyle } from '../MapStyleBuilder';
 import { MapConfig } from '../config';
 
 export function useMapStyle(config: MapConfig) {
-    const [mapStyle, setMapStyle] = useState<any>(null);
+    const [mapStyle, setMapStyle] = useState<StyleSpecification | string | null>(null);
 
     useEffect(() => {
         let isMounted = true;

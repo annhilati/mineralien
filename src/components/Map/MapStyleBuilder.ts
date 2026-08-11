@@ -1,17 +1,19 @@
-// @ts-nocheck
 import * as maplibregl from 'maplibre-gl';
+import { StyleSpecification } from 'maplibre-gl';
 import mlcontour from 'maplibre-contour';
+
+type DemSource = InstanceType<typeof mlcontour.DemSource>;
 import { MapConfig } from './config';
 
 // 1. Contour Source Generator lazy initialisieren, um SSR-Crashes zu vermeiden
-let demSource: any = null;
+let demSource: DemSource | null = null;
 
-function getDemSource(config: MapConfig) {
+function getDemSource(config: MapConfig): DemSource {
     if (!demSource) {
         demSource = new mlcontour.DemSource({
-            url: config.terrainUrl,
+            url: config.terrainUrl!,
             encoding: config.terrainEncoding,
-            maxzoom: config.terrainMaxZoom,
+            maxzoom: config.terrainMaxZoom!,
             worker: false // Workaround für Next.js
         });
         
@@ -47,7 +49,7 @@ function getDemSource(config: MapConfig) {
     return demSource;
 }
 
-export async function buildMapStyle(originalConfig: MapConfig): Promise<any> {
+export async function buildMapStyle(originalConfig: MapConfig): Promise<StyleSpecification> {
     // Clone config to safely modify it
     const config = { ...originalConfig };
     
@@ -60,8 +62,21 @@ export async function buildMapStyle(originalConfig: MapConfig): Promise<any> {
                     tempEl.style.color = v;
                     tempEl.style.display = 'none';
                     document.body.appendChild(tempEl);
-                    const computedColor = getComputedStyle(tempEl).color;
+                    let computedColor = getComputedStyle(tempEl).color;
                     document.body.removeChild(tempEl);
+
+                    // Fix für MapLibre: Es versteht das moderne CSS "color(srgb ...)" nicht, also konvertieren wir es zu rgba()
+                    if (computedColor && computedColor.startsWith('color(srgb')) {
+                        const match = computedColor.match(/color\(srgb\s+([\d.]+)\s+([\d.]+)\s+([\d.]+)(?:\s*\/\s*([\d.]+))?\)/);
+                        if (match) {
+                            const r = Math.round(parseFloat(match[1]) * 255);
+                            const g = Math.round(parseFloat(match[2]) * 255);
+                            const b = Math.round(parseFloat(match[3]) * 255);
+                            const a = match[4] ? parseFloat(match[4]) : 1;
+                            computedColor = `rgba(${r}, ${g}, ${b}, ${a})`;
+                        }
+                    }
+
                     return [k, computedColor && computedColor !== '' ? computedColor : v];
                 }
                 return [k, v];
@@ -71,15 +86,52 @@ export async function buildMapStyle(originalConfig: MapConfig): Promise<any> {
 
     // 2. Lade Basis-JSON (Carto Voyager)
     const response = await fetch(config.baseStyleUrl);
-    const baseStyle = await response.json();
-    const newStyle = { ...baseStyle };
+    const baseStyle = (await response.json()) as StyleSpecification;
+    const newStyle = { ...baseStyle } as StyleSpecification;
+
+    // 2.5 Hybrid-Injection für Satellitenbilder
+    if (config.features.enableSatelliteBasemap) {
+        newStyle.sources['satellite-source'] = {
+            type: 'raster',
+            tiles: ['https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}'],
+            tileSize: 256
+        };
+
+        const layersToInsert: any[] = [];
+
+        layersToInsert.push({
+            id: 'satellite-layer',
+            type: 'raster',
+            source: 'satellite-source',
+            paint: {
+                'raster-saturation': -1,
+                'raster-brightness-min': 0.1,
+                'raster-brightness-max': 0.7,
+                'raster-contrast': 0.25
+            }
+        });
+
+        // Globaler Farbfilter (z.B. Blaustich) über das Satellitenbild legen
+        if (config.customColors?.satelliteTint) {
+            layersToInsert.push({
+                id: 'satellite-tint-layer',
+                type: 'background',
+                paint: {
+                    'background-color': config.customColors.satelliteTint
+                }
+            });
+        }
+
+        const bgIndex = newStyle.layers.findIndex((l: any) => l.id === 'background');
+        newStyle.layers.splice(bgIndex !== -1 ? bgIndex + 1 : 0, 0, ...layersToInsert);
+    }
 
     // 3. Terrain und Hillshade Sources hinzufügen
     // 3. Terrain und Hillshade Sources hinzufügen (nur wenn aktiviert)
     if (config.features.enable3DTerrain || config.features.enableHillshade) {
         newStyle.sources['hillshade-source'] = {
             type: 'raster-dem',
-            tiles: [config.terrainUrl],
+            tiles: [config.terrainUrl!],
             encoding: config.terrainEncoding,
             tileSize: 256,
             maxzoom: config.terrainMaxZoom
@@ -89,7 +141,7 @@ export async function buildMapStyle(originalConfig: MapConfig): Promise<any> {
     if (config.features.enable3DTerrain) {
         newStyle.sources['terrain-source'] = {
             type: 'raster-dem',
-            tiles: [config.terrainUrl],
+            tiles: [config.terrainUrl!],
             encoding: config.terrainEncoding,
             tileSize: 256,
             maxzoom: config.terrainMaxZoom
@@ -108,7 +160,7 @@ export async function buildMapStyle(originalConfig: MapConfig): Promise<any> {
             type: 'vector',
             tiles: [
                 getDemSource(config).contourProtocolUrl({
-                    thresholds: config.contourThresholds,
+                    thresholds: config.contourThresholds!,
                     elevationKey: 'ele',
                     levelKey: 'level',
                     contourLayer: 'contours'
@@ -121,11 +173,15 @@ export async function buildMapStyle(originalConfig: MapConfig): Promise<any> {
     // 6. Hillshade Layer und Contours einfügen (nur wenn aktiviert)
     const backgroundIndex = newStyle.layers.findIndex((l: any) => l.id === 'background');
     const waterwayIndex = newStyle.layers.findIndex((l: any) => l.id === 'waterway');
+    const satelliteIndex = newStyle.layers.findIndex((l: any) => l.id === 'satellite-layer');
     
     if (config.features.enableHillshade) {
         // Hillshade über das Landcover (Wald/Wiese) legen, 
         // aber UNTER 'waterway' (Bäche) und 'water' (Seen), damit das Wasser nicht abgedunkelt wird!
-        const insertIndex = waterwayIndex !== -1 ? waterwayIndex : backgroundIndex + 1;
+        let insertIndex = newStyle.layers.length;
+        if (waterwayIndex !== -1) insertIndex = waterwayIndex;
+        else if (satelliteIndex !== -1) insertIndex = satelliteIndex + 1;
+        else if (backgroundIndex !== -1) insertIndex = backgroundIndex + 1;
         
         newStyle.layers.splice(insertIndex, 0, {
             id: 'hillshade',
@@ -181,6 +237,39 @@ export async function buildMapStyle(originalConfig: MapConfig): Promise<any> {
 
     // Partielle Overrides für Carto Voyager
     newStyle.layers = newStyle.layers.map((layer: any) => {
+        // Hybrid-Modus: Mache alle undurchsichtigen Flächen und Straßen (außer Grenzen) unsichtbar
+        if (config.features.enableSatelliteBasemap) {
+            if (layer.type === 'fill' || layer.type === 'fill-extrusion') {
+                if (layer.id !== 'water' && layer.id !== 'landcover') {
+                    return { ...layer, layout: { ...layer.layout, visibility: 'none' } };
+                }
+            }
+            
+            const isBoundary = layer.id.includes('boundary') || layer.id.includes('admin');
+            const isPath = layer.id.includes('path') || layer.id.includes('track') || layer.id.includes('footway');
+            
+            if (layer.type === 'line' && layer.id !== 'contour-lines') {
+                if (!isBoundary && !isPath) {
+                    return { ...layer, layout: { ...layer.layout, visibility: 'none' } };
+                }
+            }
+            
+            // Grenzen für Satellitenkarte reparieren (sichtbar machen und färben)
+            if (isBoundary) {
+                layer.minzoom = 0; // Verhindert, dass Grenzen (wie Deutschland) erst spät aufploppen
+                if (config.customColors?.boundaries && layer.type === 'line') {
+                    const isState = layer.id.includes('4') || layer.id.includes('state') || layer.id.includes('province');
+                    
+                    layer.paint = { 
+                        ...layer.paint, 
+                        'line-color': config.customColors.boundaries,
+                        'line-opacity': isState ? 0.4 : 1.0,
+                        'line-width': isState ? 2 : 1.25
+                    };
+                }
+            }
+        }
+
         // 3D Gebäude (nur wenn 3D aktiv ist)
         if (config.features.enable3DTerrain && layer.id === 'building') {
             return {

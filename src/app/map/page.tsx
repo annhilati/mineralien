@@ -17,7 +17,7 @@ export default function MapPage() {
             flex: 1, 
             margin: 'var(--gap-light)', 
             position: 'relative', 
-            outline: '2px solid rgb(from var(--weiss) r g b / 0.4)', 
+            outline: '2px solid rgb(from var(--weiss) r g b / 0.2)', 
             outlineOffset: '4px', 
             borderRadius: 'var(--radius-heavy)',
             overflow: 'hidden'
@@ -45,7 +45,7 @@ export default function MapPage() {
                                 onMouseEnter={() => setHoveredMarker(f.id)}
                                 onMouseLeave={() => setHoveredMarker(null)}
                             >
-                                <Compass color='var(--weiss)'/>
+                                <Compass size="var(--icon-size)" color='var(--weiss)'/>
                             </div>
                         </Marker>
 

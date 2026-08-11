@@ -1,8 +1,7 @@
 "use client";
 
 import { useState, useRef, forwardRef, useImperativeHandle } from 'react';
-import { Map, Marker, MapRef, Popup } from 'react-map-gl/maplibre';
-import { Compass } from 'lucide-react';
+import { Map, MapRef } from 'react-map-gl/maplibre';
 import * as maplibregl from 'maplibre-gl';
 
 import 'maplibre-gl/dist/maplibre-gl.css';
@@ -17,7 +16,7 @@ if (typeof window !== 'undefined') {
     }
 }
 
-import { DARK_MAP_CONFIG } from './config';
+import { DARK_MAP_CONFIG, SATELLITE_CONFIG } from './config';
 import { useMapStyle } from './hooks/useMapStyle';
 
 export interface DarkMiniMapRef {
@@ -29,16 +28,20 @@ interface DarkMiniMapProps {
     center?: { longitude: number; latitude: number };
     zoom?: number;
     children?: React.ReactNode;
+    variant?: 'satellite' | 'schematic';
 }
 
-const DarkMiniMap = forwardRef<DarkMiniMapRef, DarkMiniMapProps>(({ fixed = false, center, zoom, children }, ref) => {
+const DarkMiniMap = forwardRef<DarkMiniMapRef, DarkMiniMapProps>(({ fixed = false, center, zoom, children, variant = 'satellite' }, ref) => {
     const mapRef = useRef<MapRef>(null);
-    // 1. Modulares Styling laden mit unserer neuen Dark Config
-    const mapStyle = useMapStyle(DARK_MAP_CONFIG);
+    
+    const config = variant === 'schematic' ? DARK_MAP_CONFIG : SATELLITE_CONFIG;
+    
+    // 1. Modulares Styling laden
+    const mapStyle = useMapStyle(config);
     
     // ViewState aus Config mit übergebenen Props mergen
     const initialViewState = {
-        ...DARK_MAP_CONFIG.initialViewState,
+        ...config.initialViewState,
         ...(center ? { longitude: center.longitude, latitude: center.latitude } : {}),
         ...(zoom !== undefined ? { zoom } : {})
     };

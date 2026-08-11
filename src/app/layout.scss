@@ -4,7 +4,7 @@ header.header {
     display: flex;
     flex-direction: column;
     width: 100%;
-    height: 90px;
+    height: 100px;
     flex-shrink: 0;
     align-items: center;
     justify-content: center;
@@ -30,7 +30,7 @@ header.header {
             font-family: var(--font-title), sans-serif;
             font-size: 38px;
             font-weight: 400;
-            margin-top: -4px; // optische Optimierung
+            margin-top: -2px; // optische Optimierung
         }
 
         nav.navigation {
