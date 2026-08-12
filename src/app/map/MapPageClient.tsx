@@ -1,31 +1,56 @@
 "use client";
 
 import React, { useState, useRef, useEffect } from "react";
-import { Marker, Popup } from "react-map-gl/maplibre";
-import { Navigation, Compass } from "lucide-react";
+import { Marker, Popup, useMap } from "react-map-gl/maplibre";
+import { Navigation2, Compass } from "lucide-react";
 import DarkMiniMap, { DarkMiniMapRef } from "@/components/Map/DarkMiniMap";
 import CrystalViewerClient from "@/components/3D/CrystalViewerClient";
+import { Fundstelle, MineralData } from "@/types";
 
-interface MineralData {
-    id: string;
-    name: string;
-    base64Data?: string;
-}
 
-interface Fundstelle {
-    id: string;
-    title: string;
-    description: string;
-    latitude: number;
-    longitude: number;
-    mineralsData?: MineralData[];
-}
+const ZoomDependentLabel = ({ text, minZoom }: { text: string, minZoom: number }) => {
+    const { current: map } = useMap();
+    const [visible, setVisible] = useState(false);
 
-interface MapPageClientProps {
-    fundstellen: Fundstelle[];
-}
+    useEffect(() => {
+        if (!map) return;
+        
+        const handleZoom = () => {
+            const isVis = map.getZoom() >= minZoom;
+            if (isVis !== visible) setVisible(isVis);
+        };
+        
+        handleZoom(); // Initiale Prüfung
+        map.on('zoom', handleZoom);
+        
+        return () => {
+            map.off('zoom', handleZoom);
+        };
+    }, [map, visible, minZoom]);
 
-const RandomRotatingIcon = () => {
+    return (
+        <div style={{
+            position: 'absolute',
+            top: '100%',
+            left: '50%',
+            transform: 'translateX(-50%)',
+            marginTop: '6px',
+            color: 'var(--weiss)',
+            fontFamily: 'var(--font-title)',
+            fontSize: '13px',
+            fontWeight: 500,
+            textShadow: '0 0 6px var(--bg-primary), 0 0 6px var(--bg-primary), 0 0 6px var(--bg-primary)',
+            whiteSpace: 'nowrap',
+            pointerEvents: 'none',
+            opacity: visible ? 1 : 0,
+            transition: 'opacity 0.4s ease-in-out'
+        }}>
+            {text}
+        </div>
+    );
+};
+
+const PulseMarker = () => {
     const [rotation, setRotation] = useState(0);
     const [duration, setDuration] = useState(0);
 
@@ -41,7 +66,7 @@ const RandomRotatingIcon = () => {
             timeoutId = setTimeout(() => {
                 if (!isMounted) return;
                 // Rotation um -270 bis +270 Grad
-                const rotateBy = (Math.random() * 540) - 270;
+                const rotateBy = (Math.random() * 490) - 130;
                 // Animationsdauer (0 bis 4 Sekunden)
                 const animDuration = (Math.random() * 2000) + 1000;
                 
@@ -66,12 +91,12 @@ const RandomRotatingIcon = () => {
             transform: `rotate(${rotation}deg)`,
             transition: `transform ${duration}ms ease-in-out`
         }}>
-            <Navigation fill="var(--orange)" color="var(--orange)" />
+            <Navigation2 fill="var(--orange)" color="var(--orange)" strokeLinejoin="miter" strokeLinecap="square" size={28} />
         </div>
     );
 };
 
-export default function MapPageClient({ fundstellen }: MapPageClientProps) {
+export default function MapPageClient({ fundstellen }: { fundstellen: Fundstelle[] }) {
     const [hoveredMarker, setHoveredMarker] = useState<string | null>(null);
     const mapRef = useRef<DarkMiniMapRef>(null);
 
@@ -86,14 +111,13 @@ export default function MapPageClient({ fundstellen }: MapPageClientProps) {
             overflow: 'hidden'
         }}>
             <DarkMiniMap ref={mapRef} center={{ longitude: 13.097265222611101, latitude: 49.858742456189496 }} zoom={5.2}>
-                {/* Statischer Marker für Dresden */}
                 <Marker 
                     longitude={13.7373} 
                     latitude={51.0504} 
                     anchor="center"
-                    style={{ pointerEvents: 'none', zIndex: '10' }}
+                    style={{ pointerEvents: 'none' }}
                 >
-                    <RandomRotatingIcon />
+                    <PulseMarker />
                 </Marker>
 
                 {fundstellen.map((f) => (
@@ -115,10 +139,12 @@ export default function MapPageClient({ fundstellen }: MapPageClientProps) {
                         >
                             <div 
                                 className="map-marker"
+                                style={{ position: 'relative' }}
                                 onMouseEnter={() => setHoveredMarker(f.id)}
                                 onMouseLeave={() => setHoveredMarker(null)}
                             >
                                 <Compass size="var(--icon-size)" color='var(--weiss)'/>
+                                <ZoomDependentLabel text={f.title} minZoom={10} />
                             </div>
                         </Marker>
 
@@ -132,6 +158,7 @@ export default function MapPageClient({ fundstellen }: MapPageClientProps) {
                                 closeOnClick={false}
                                 maxWidth={f.mineralsData && f.mineralsData.length > 0 ? "500px" : "350px"}
                                 className="map-marker-popup"
+                                style={{ zIndex: 9999 }}
                             >
                                 <div className="popup-wrapper" style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
                                     <div>
@@ -184,7 +211,7 @@ export default function MapPageClient({ fundstellen }: MapPageClientProps) {
                     </React.Fragment>
                 ))}
             </DarkMiniMap>
-            {/* Schattige Verblendung (Vignette) über den Kanten */}
+
             <div style={{
                 position: 'absolute',
                 top: 0, left: 0, right: 0, bottom: 0,

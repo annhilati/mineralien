@@ -183,7 +183,7 @@ export const SATELLITE_CONFIG: MapConfig = {
         buildings: '#000000',
         contours: 'rgba(255, 255, 255, 0.8)',
         paths: 'rgb(from var(--gelb) r g b / 0.0)',
-        boundaries: 'rgb(from var(--fuchsia) r g b / 0.2)', // Fuchsia (#f54a7d) mit Transparenz, damit es sich abhebt
+        boundaries: 'var(--orange)', // Weiße Grenzen
         hillshade: '#000000',
         satelliteTint: 'rgba(20, 45, 85, 0.25)'
     }

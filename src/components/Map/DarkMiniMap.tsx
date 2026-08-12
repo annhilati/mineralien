@@ -9,10 +9,11 @@ import './DarkMiniMap.scss'
 
 // Workaround für Next.js (App Router / Webpack) Worker-Ladeprobleme
 if (typeof window !== 'undefined') {
-    if (typeof (maplibregl as any).setWorkerUrl === 'function') {
-        (maplibregl as any).setWorkerUrl('https://unpkg.com/maplibre-gl@6.2.0/dist/maplibre-gl-worker.mjs');
+    const ml = maplibregl as any;
+    if (typeof ml.setWorkerUrl === 'function') {
+        ml.setWorkerUrl('https://unpkg.com/maplibre-gl@6.2.0/dist/maplibre-gl-worker.mjs');
     } else {
-        (maplibregl as any).workerUrl = 'https://unpkg.com/maplibre-gl@6.2.0/dist/maplibre-gl-worker.mjs';
+        ml['workerUrl'] = 'https://unpkg.com/maplibre-gl@6.2.0/dist/maplibre-gl-worker.mjs';
     }
 }
 

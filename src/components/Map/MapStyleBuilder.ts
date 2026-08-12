@@ -264,8 +264,8 @@ export async function buildMapStyle(originalConfig: MapConfig): Promise<StyleSpe
                     layer.paint = { 
                         ...layer.paint, 
                         'line-color': config.customColors.boundaries,
-                        'line-opacity': isState ? 0.4 : 1.0,
-                        'line-width': isState ? 2 : 1.25
+                        'line-opacity': isState ? 0 : 0.6,
+                        'line-width': isState ? 0.8 : 0.8
                     };
                 }
             }
