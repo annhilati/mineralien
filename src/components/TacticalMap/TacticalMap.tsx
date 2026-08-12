@@ -127,7 +127,7 @@ export const TACTICAL_SATELLITE_CONFIG: MapConfig = {
         'place_country': { // Greift für 'place_country_major' und 'place_country_other'
             color: 'var(--weiss)',
             haloColor: 'rgba(0,0,0,0.8)',
-            haloWidth: 1.5,
+            haloWidth: 0.7,
             size: 18,
             font: ['var(--font-title) Bold']
         },
