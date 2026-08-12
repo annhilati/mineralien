@@ -7,26 +7,27 @@ import * as maplibregl from 'maplibre-gl';
 
 // Workaround für Next.js (App Router / Webpack) Worker-Ladeprobleme
 if (typeof window !== 'undefined') {
-    if (typeof (maplibregl as any).setWorkerUrl === 'function') {
-        (maplibregl as any).setWorkerUrl('https://unpkg.com/maplibre-gl@6.2.0/dist/maplibre-gl-worker.mjs');
+    const ml = maplibregl as any;
+    if (typeof ml.setWorkerUrl === 'function') {
+        ml.setWorkerUrl('https://unpkg.com/maplibre-gl@6.2.0/dist/maplibre-gl-worker.mjs');
     } else {
-        (maplibregl as any).workerUrl = 'https://unpkg.com/maplibre-gl@6.2.0/dist/maplibre-gl-worker.mjs';
+        ml['workerUrl'] = 'https://unpkg.com/maplibre-gl@6.2.0/dist/maplibre-gl-worker.mjs';
     }
 }
 
-import { MAP_CONFIG } from './config';
-import { useMapStyle } from './hooks/useMapStyle';
-import { useMapContextMenu } from './hooks/useMapContextMenu';
-import { MapContextMenu } from './MapContextMenu';
+import { DARK_SCHEMATIC_MAP_CONFIG } from './TacticalMap';
+import { useMapStyle } from '../map_engine/hooks/useMapStyle';
+import { useMapContextMenu } from '../map_engine/hooks/useMapContextMenu';
+import { MapContextMenu } from '../map_engine/MapContextMenu';
 
 export default function Testkarte() {
     // 1. Modulares Styling laden (Dependency Injection via Config)
-    const mapStyle = useMapStyle(MAP_CONFIG);
+    const mapStyle = useMapStyle(DARK_SCHEMATIC_MAP_CONFIG);
     
     // 2. Modulares Kontextmenü laden
     const { contextMenu, handleContextMenu, closeContextMenu } = useMapContextMenu();
     
-    const [zoom, setZoom] = useState(MAP_CONFIG.initialViewState.zoom);
+    const [zoom, setZoom] = useState(DARK_SCHEMATIC_MAP_CONFIG.initialViewState.zoom);
 
     if (!mapStyle) {
         return (
@@ -40,7 +41,7 @@ export default function Testkarte() {
         <div style={{ position: 'relative', width: '100%', aspectRatio: '16/9', overflow: 'hidden' }}>
             <Map
                 mapLib={maplibregl}
-                initialViewState={MAP_CONFIG.initialViewState}
+                initialViewState={DARK_SCHEMATIC_MAP_CONFIG.initialViewState}
                 mapStyle={mapStyle}
                 maxZoom={18}
                 minZoom={0.8}

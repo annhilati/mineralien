@@ -40,7 +40,7 @@ export function useMapContextMenu() {
     }, []);
 
     const closeContextMenu = useCallback(() => {
-        setContextMenu(prev => prev ? null : null);
+        setContextMenu(null);
     }, []);
 
     return {

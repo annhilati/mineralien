@@ -19,6 +19,7 @@
     "lucide-react": "^1.31.0",
     "maplibre-contour": "^0.1.0",
     "maplibre-gl": "^6.2.0",
+    "maplibre-local-glyphs": "^1.2.0",
     "next": "16.3.0",
     "next-plugin-yaml": "^1.0.1",
     "react": "19.2.8",

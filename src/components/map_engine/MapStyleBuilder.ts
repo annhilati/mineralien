@@ -3,10 +3,36 @@ import { StyleSpecification } from 'maplibre-gl';
 import mlcontour from 'maplibre-contour';
 
 type DemSource = InstanceType<typeof mlcontour.DemSource>;
-import { MapConfig } from './config';
+import { MapConfig } from './types';
 
 // 1. Contour Source Generator lazy initialisieren, um SSR-Crashes zu vermeiden
 let demSource: DemSource | null = null;
+
+// Hilfsfunktion: Wandelt CSS-Ausdrücke wie var(--fuchsia) oder rgb(from ...) über den Browser in von MapLibre verdaubare RGBA-Werte um
+function resolveCssColor(colorString: string): string {
+    if (typeof window === 'undefined' || typeof document === 'undefined') return colorString;
+    if (!colorString.includes('var(') && !colorString.startsWith('rgb(from') && !colorString.startsWith('hsl') && !colorString.startsWith('color-mix')) return colorString;
+    
+    const tempEl = document.createElement('div');
+    tempEl.style.color = colorString;
+    tempEl.style.display = 'none';
+    document.body.appendChild(tempEl);
+    let resolvedColor = getComputedStyle(tempEl).color;
+    document.body.removeChild(tempEl);
+    
+    // Fix für MapLibre: Konvertiere modernes CSS "color(srgb ...)" zu rgba()
+    if (resolvedColor && resolvedColor.startsWith('color(srgb')) {
+        const match = resolvedColor.match(/color\(srgb\s+([\d.]+)\s+([\d.]+)\s+([\d.]+)(?:\s*\/\s*([\d.]+))?\)/);
+        if (match) {
+            const r = Math.round(parseFloat(match[1]) * 255);
+            const g = Math.round(parseFloat(match[2]) * 255);
+            const b = Math.round(parseFloat(match[3]) * 255);
+            const a = match[4] ? parseFloat(match[4]) : 1;
+            resolvedColor = `rgba(${r}, ${g}, ${b}, ${a})`;
+        }
+    }
+    return resolvedColor || colorString;
+}
 
 function getDemSource(config: MapConfig): DemSource {
     if (!demSource) {
@@ -88,6 +114,9 @@ export async function buildMapStyle(originalConfig: MapConfig): Promise<StyleSpe
     const response = await fetch(config.baseStyleUrl);
     const baseStyle = (await response.json()) as StyleSpecification;
     const newStyle = { ...baseStyle } as StyleSpecification;
+    
+    // Aktiviere lokales (On-The-Fly) Font Rendering für alle Schriften
+    newStyle.glyphs = 'local://{fontstack}/{range}.pbf';
 
     // 2.5 Hybrid-Injection für Satellitenbilder
     if (config.features.enableSatelliteBasemap) {
@@ -105,9 +134,9 @@ export async function buildMapStyle(originalConfig: MapConfig): Promise<StyleSpe
             source: 'satellite-source',
             paint: {
                 'raster-saturation': -1,
-                'raster-brightness-min': 0.1,
-                'raster-brightness-max': 0.7,
-                'raster-contrast': 0.45
+                'raster-brightness-min': 0.13, // Tiefen aufhellen, damit Struktur bleibt
+                'raster-brightness-max': 0.75,
+                'raster-contrast': 0.40 // Kontrast reduzieren, damit dunkle Bereiche nicht wegbrechen
             }
         });
 
@@ -255,8 +284,16 @@ export async function buildMapStyle(originalConfig: MapConfig): Promise<StyleSpe
                 }
             }
             
-            // Grenzen für Satellitenkarte reparieren (sichtbar machen und färben)
+            // Grenzen reparieren und Gemeinden ausblenden
             if (isBoundary) {
+                // Nur Staats- und Bundeslandgrenzen erlauben (Gemeinden / Landkreise ausblenden)
+                const isCountry = layer.id.includes('2') || layer.id.includes('country') || layer.id.includes('nation') || layer.id === 'boundary';
+                const isState = layer.id.includes('4') || layer.id.includes('state') || layer.id.includes('province');
+
+                if (!isCountry && !isState) {
+                    return { ...layer, layout: { ...layer.layout, visibility: 'none' } };
+                }
+
                 layer.minzoom = 0; // Verhindert, dass Grenzen (wie Deutschland) erst spät aufploppen
                 if (config.customColors?.boundaries && layer.type === 'line') {
                     const isState = layer.id.includes('4') || layer.id.includes('state') || layer.id.includes('province');
@@ -394,6 +431,22 @@ export async function buildMapStyle(originalConfig: MapConfig): Promise<StyleSpe
                     });
                 };
                 layer.layout['text-field'] = replaceName(textField);
+            }
+        }
+
+        // Text-Overrides anwenden (Farben, Halos, Fonts etc.)
+        if (layer.type === 'symbol' && config.textOverrides) {
+            for (const [key, override] of Object.entries(config.textOverrides)) {
+                if (layer.id.startsWith(key)) {
+                    if (!layer.paint) layer.paint = {};
+                    if (!layer.layout) layer.layout = {};
+                    
+                    if (override.color) layer.paint['text-color'] = resolveCssColor(override.color);
+                    if (override.haloColor) layer.paint['text-halo-color'] = resolveCssColor(override.haloColor);
+                    if (override.haloWidth !== undefined) layer.paint['text-halo-width'] = override.haloWidth;
+                    if (override.size !== undefined) layer.layout['text-size'] = override.size;
+                    if (override.font) layer.layout['text-font'] = override.font;
+                }
             }
         }
 

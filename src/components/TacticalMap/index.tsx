@@ -14,11 +14,11 @@ const Karte = dynamic(() => import('./Testkarte'), {
   )
 });
 
-export const DarkMiniMap = dynamic(() => import('./DarkMiniMap'), {
+export const TacticalMap = dynamic(() => import('./TacticalMap'), {
   ssr: false,
   loading: () => (
     <div style={{ display: 'flex', width: '100%', height: '100%', minHeight: '500px', justifyContent: 'center', alignItems: 'center' }}>
-      Lade Dark Map...
+      Lade Tactical Map...
     </div>
   )
 });

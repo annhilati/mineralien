@@ -9,7 +9,7 @@ import { Fundstelle, MineralData } from '@/types';
 const MineralRawSchema = z.object({
     id: z.string(),
     name: z.string().optional(),
-    stl: z.string().optional()
+    model: z.string().optional()
 });
 const MineralienArraySchema = z.array(MineralRawSchema);
 
@@ -42,10 +42,10 @@ export function getMineralDataWithBase64(minId: string): MineralData {
 
     let base64Data: string | undefined = undefined;
     
-    if (mineralDef.stl) {
+    if (mineralDef.model) {
         try {
             // Path Traversal verhindern
-            const safeFile = mineralDef.stl.replace(/(\.\.\/|\.\.\\)/g, '');
+            const safeFile = mineralDef.model.replace(/(\.\.\/|\.\.\\)/g, '');
             const filePath = path.join(process.cwd(), 'content', 'crystals', safeFile);
             
             if (fs.existsSync(filePath)) {

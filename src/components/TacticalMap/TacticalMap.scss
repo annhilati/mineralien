@@ -1,27 +1,27 @@
 @use "@/components/Buttons.scss" as Buttons;
 
 
-
 .map-marker {
     @include Buttons.clickable;
     
-    background-color: rgb(from var(--rot) r g b / 0.6);
-    color: var(--weiss);
-    border-radius:  var(--radius-light) ;
-    cursor: pointer;
-    font-weight: bold ;
-    aspect-ratio:  1/1 ;
+    position: relative;
     display: flex ;
+    aspect-ratio:  1/1 ;
+    padding: 4px;
     justify-content:  center ;
     align-items: center ;
-    padding: 4px;
+
+    background-color: rgb(from var(--rot) r g b / 0.6);
+    color: var(--weiss);
+    border-radius: var(--radius-light);
+    cursor: pointer;
+    font-weight: bold ;
 
     --icon-size: 20px;
 }
 
 .pulse-marker {
     position: relative;
-    /* Zentrierung für das Icon */
     display: flex;
     align-items: center;
     justify-content: center;
@@ -59,8 +59,11 @@
 }
 
 
+// TODO: Komplettes Redesign
 /* --- MapLibre Popup Dark Theme Overrides --- */
 .map-marker-popup {
+    z-index: 9999;
+
     .maplibregl-popup-content {
         background-color: var(--bg-primary);
         color: var(--weiss);
@@ -88,23 +91,49 @@
                 font-size: 13px;
                 opacity: 0.9;
             }
+
+            .mineral-wrapper {
+                display: flex;
+                gap: 10px;
+                flex-wrap: wrap;
+                margin-top: 5px;
+
+                .mineral-box {
+                    width: 120px;
+                    height: 150px;
+                    background-color: rgb(from var(--bg-primary) r g b / 0.5);
+                    border-radius: var(--radius-light);
+                    overflow: hidden;
+                    display: flex;
+                    flex-direction: column;
+                    border: 1px solid rgb(from var(--weiss) r g b / 0.15);
+                    box-shadow: inset 0 0 10px 0 rgba(0,0,0,0.5);
+
+                    .mineral-name {
+                        padding: 5px;
+                        font-size: 12px;
+                        text-align: center;
+                        font-family: var(--font-title);
+                        border-bottom: 1px solid rgb(from var(--weiss) r g b / 0.15);
+                        background-color: rgb(from var(--bg-primary) r g b / 0.8);
+                        font-weight: 500;
+                    }
+
+                    .mineral-render-wrapper {
+                        flex: 1;
+                        position: relative;
+                        cursor: default;
+                    }
+                }
+            }
         }
     }
-}
 
-/* Den kleinen Pfeil (Tip) einfärben */
-.map-marker-popup.maplibregl-popup-anchor-bottom .maplibregl-popup-tip {
-    border-top-color: var(--fuchsia);
-}
-
-.map-marker-popup.maplibregl-popup-anchor-top .maplibregl-popup-tip {
-    border-bottom-color: var(--fuchsia);
-}
-
-.map-marker-popup.maplibregl-popup-anchor-left .maplibregl-popup-tip {
-    border-right-color: var(--fuchsia);
-}
-
-.map-marker-popup.maplibregl-popup-anchor-right .maplibregl-popup-tip {
-    border-left-color: var(--fuchsia);
+    .maplibregl-popup-anchor {
+        &-bottom, &-top, &-left, &-right {
+            .maplibregl-popup-tip {
+                border-top-color: var(--fuchsia);
+            }
+        }
+    }
 }

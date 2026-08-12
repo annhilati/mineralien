@@ -1,9 +1,8 @@
 import Layout from "@/components/Layout"
 import Link from "next/link"
 import { Button, PanoramaButton } from "@/components/Buttons"
-import DarkMiniMap from "@/components/Map/DarkMiniMap";
+import TacticalMap from "@/components/TacticalMap/TacticalMap";
 import { SiDiscord } from '@icons-pack/react-simple-icons';
-import CrystalViewer from "@/components/3D/CrystalViewer";
 
 export default function Home() {
     return (
@@ -11,13 +10,10 @@ export default function Home() {
             <Layout row ratios={[1, 2.5]}>
                 <Layout gap="var(--gap-light)">
                     <Link href="/map">
-                        <PanoramaButton label="Karte" height="195px">
-                            <DarkMiniMap fixed={true} zoom={4} center={{ longitude: 11, latitude: 50 }} variant="schematic" />
+                        <PanoramaButton label="Karte" height="402px">
+                            <TacticalMap fixed={true} zoom={4} center={{ longitude: 11, latitude: 50 }} variant="schematic" />
                         </PanoramaButton>
                     </Link>
-                    <PanoramaButton label="3D Kristalle (Test)" height="195px">
-                        <CrystalViewer filename="apophyllit.stl" color="#ffffff" fixed={true} />
-                    </PanoramaButton>
                 </Layout>
                 <Layout gap="var(--gap-light)">
                     <Link href="https://www.mineralienatlas.de/lexikon/index.php/MediaDataShow?hoch=100&quer=1&sort=Text(a)&bildertyp=&Nutzer=Annhilati">

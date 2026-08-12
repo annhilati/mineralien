@@ -3,7 +3,7 @@
 import React, { useState, useRef, useEffect } from "react";
 import { Marker, Popup, useMap } from "react-map-gl/maplibre";
 import { Navigation2, Compass } from "lucide-react";
-import DarkMiniMap, { DarkMiniMapRef } from "@/components/Map/DarkMiniMap";
+import TacticalMap, { TacticalMapRef } from "@/components/TacticalMap/TacticalMap";
 import CrystalViewerClient from "@/components/3D/CrystalViewerClient";
 import { Fundstelle, MineralData } from "@/types";
 
@@ -60,14 +60,14 @@ const PulseMarker = () => {
 
         const tick = () => {
             if (!isMounted) return;
-            // Stillstand (2 bis 15 Sekunden)
-            const delay = Math.random() * 13000 + 2000;
+            // Stillstand (2 bis 22 Sekunden)
+            const delay = (Math.random() * 20000) + 2000;
             
             timeoutId = setTimeout(() => {
                 if (!isMounted) return;
-                // Rotation um -270 bis +270 Grad
-                const rotateBy = (Math.random() * 490) - 130;
-                // Animationsdauer (0 bis 4 Sekunden)
+                // Rotation um -130 bis +130 Grad
+                const rotateBy = (Math.random() * 260) - 130;
+                // Animationsdauer (1 bis 3 Sekunden)
                 const animDuration = (Math.random() * 2000) + 1000;
                 
                 setRotation(prev => prev + rotateBy);
@@ -98,7 +98,7 @@ const PulseMarker = () => {
 
 export default function MapPageClient({ fundstellen }: { fundstellen: Fundstelle[] }) {
     const [hoveredMarker, setHoveredMarker] = useState<string | null>(null);
-    const mapRef = useRef<DarkMiniMapRef>(null);
+    const mapRef = useRef<TacticalMapRef>(null);
 
     return (
         <main style={{ 
@@ -110,10 +110,10 @@ export default function MapPageClient({ fundstellen }: { fundstellen: Fundstelle
             borderRadius: 'var(--radius-heavy)',
             overflow: 'hidden'
         }}>
-            <DarkMiniMap ref={mapRef} center={{ longitude: 13.097265222611101, latitude: 49.858742456189496 }} zoom={5.2}>
+            <TacticalMap ref={mapRef} center={{ longitude: 13.097265222611101, latitude: 50.858742456189496  }} zoom={5.3}>
                 <Marker 
-                    longitude={13.7373} 
-                    latitude={51.0504} 
+                    longitude={13.738412463488196} 
+                    latitude={51.05093316571198} 
                     anchor="center"
                     style={{ pointerEvents: 'none' }}
                 >
@@ -139,7 +139,6 @@ export default function MapPageClient({ fundstellen }: { fundstellen: Fundstelle
                         >
                             <div 
                                 className="map-marker"
-                                style={{ position: 'relative' }}
                                 onMouseEnter={() => setHoveredMarker(f.id)}
                                 onMouseLeave={() => setHoveredMarker(null)}
                             >
@@ -158,43 +157,22 @@ export default function MapPageClient({ fundstellen }: { fundstellen: Fundstelle
                                 closeOnClick={false}
                                 maxWidth={f.mineralsData && f.mineralsData.length > 0 ? "500px" : "350px"}
                                 className="map-marker-popup"
-                                style={{ zIndex: 9999 }}
                             >
-                                <div className="popup-wrapper" style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-                                    <div>
-                                        <h3 className="popup-title">{f.title}</h3>
-                                        <p className="popup-text">
-                                            {f.description}
-                                        </p>
-                                    </div>
+                                <div className="popup-wrapper">
+                                    <h3 className="popup-title">{f.title}</h3>
+                                    { (f.description) && <p className="popup-text">
+                                        {f.description}
+                                    </p>}
                                     
                                     {/* Mineralien-Boxen */}
                                     {f.mineralsData && f.mineralsData.length > 0 && (
-                                        <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap', marginTop: '5px' }}>
+                                        <div className="mineral-wrapper">
                                             {f.mineralsData.map(mineral => (
-                                                <div key={mineral.id} style={{
-                                                    width: '120px',
-                                                    height: '150px',
-                                                    backgroundColor: 'rgb(from var(--bg-primary) r g b / 0.5)',
-                                                    borderRadius: 'var(--radius-light)',
-                                                    overflow: 'hidden',
-                                                    display: 'flex',
-                                                    flexDirection: 'column',
-                                                    border: '1px solid rgb(from var(--weiss) r g b / 0.15)',
-                                                    boxShadow: 'inset 0 0 10px 0 rgba(0,0,0,0.5)'
-                                                }}>
-                                                    <div style={{
-                                                        padding: '5px',
-                                                        fontSize: '12px',
-                                                        textAlign: 'center',
-                                                        fontFamily: 'var(--font-title)',
-                                                        borderBottom: '1px solid rgb(from var(--weiss) r g b / 0.15)',
-                                                        backgroundColor: 'rgb(from var(--bg-primary) r g b / 0.8)',
-                                                        fontWeight: 500
-                                                    }}>
+                                                <div key={mineral.id} className="mineral-box">
+                                                    <div className="mineral-name">
                                                         {mineral.name}
                                                     </div>
-                                                    <div style={{ flex: 1, position: 'relative', cursor: 'default' }}>
+                                                    <div className="mineral-render-wrapper">
                                                         {mineral.base64Data ? (
                                                             <CrystalViewerClient base64Data={mineral.base64Data} color="#ffffff" fixed={true} />
                                                         ) : (
@@ -210,7 +188,7 @@ export default function MapPageClient({ fundstellen }: { fundstellen: Fundstelle
                         )}
                     </React.Fragment>
                 ))}
-            </DarkMiniMap>
+            </TacticalMap>
 
             <div style={{
                 position: 'absolute',

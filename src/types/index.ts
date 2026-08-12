@@ -7,9 +7,10 @@ export interface MineralData {
 export interface Fundstelle {
     id: string;
     title: string;
-    description: string;
     latitude: number;
     longitude: number;
+    type?: "aufgegeben";
+    description?: string;
     minerals?: string[];
     mineralsData?: MineralData[];
 }

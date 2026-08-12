@@ -1,5 +1,5 @@
 export interface Mineral {
     id: string
     name: string
-    stl?: string
+    model?: string
 }
