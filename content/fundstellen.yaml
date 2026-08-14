@@ -1,13 +1,8 @@
 - id: grube_clara
-  title: "Grube Clara"
+  title: Mineralienhalde der Grube Clara
   description: Mineralienreichste Grube in Europa
   longitude: 8.21277800
   latitude: 48.28583300
-- id: schacht_116
-  title: Wismut Schacht 116
-  description: Halde eines aufgelassenen Schachts, genannt "Heilige Drei Könige"
-  longitude: 12.99161196
-  latitude: 50.56443079
 - id: hohe_tauern
   title: Hohe Tauern
   description: Eine Hochgebirgsregion der Zentralalpen mit einer großen Vielfalt an alpinen Mineralien
@@ -20,9 +15,14 @@
   description: Historischer Kupferabbau
   latitude: 47.35816 
   longitude: 13.73723
+- id: schacht_116
+  title: Halden des Schacht 116
+  description: Halde eines aufgelassenen Wismut-Schachts, genannt "Heilige Drei Könige"
+  longitude: 12.99161196
+  latitude: 50.56443079
 - id: schacht_46
-  title: Wismut Schacht 46
-  description: Halde eines aufgelassenen Schachts, genannt "Grube Palmbaum"
+  title: Halden des Schacht 46
+  description: Halde eines aufgelassenen Wismut-Schachts, genannt "Grube Palmbaum"
   latitude: 50.66417
   longitude: 13.09389
 - id: schlottwitz
